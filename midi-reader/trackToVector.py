@@ -1,8 +1,10 @@
 import os
 import midi
+import json
 
 rootdir = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/clean_midi'
 songNameFile = 'melSongs.txt'
+songratio = {}
 
 def getTrackTicks(filename):
     pattern = midi.read_midifile(filename)
@@ -46,6 +48,8 @@ for file in medFiles:
     fileName = os.path.join(rootdir, file)
     ticks = getTrackTicks(fileName)
     final = tickToRatio(ticks)
-    print(file)
-    print(final)
+    if final:
+        songratio[file] = final
 
+with open('melsongratio.txt', 'w') as file:
+    file.write(json.dumps(songratio))
