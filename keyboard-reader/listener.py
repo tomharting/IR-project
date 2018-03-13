@@ -11,14 +11,11 @@ def on_press(key):
     global prevTime
     global timeVector
 
-    print 'Tap!'
-
     currentTime = time.time()
 
     if prevTime != 0:
         prevDuration = currentTime - prevTime
         timeVector = np.append(timeVector, prevDuration)
-        print(timeVector)
 
     prevTime = currentTime
 
@@ -31,3 +28,12 @@ def on_press(key):
 with keyboard.Listener(
         on_press=on_press) as listener:
     listener.join()
+
+timeVector = timeVector[:-1]
+
+featureVector = np.array([1])
+for i in range(1, len(timeVector)):
+    feature = timeVector[i]/timeVector[i-1]
+    featureVector = np.append(featureVector, feature)
+
+print(featureVector)
