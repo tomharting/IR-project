@@ -1,5 +1,6 @@
 #shifted alignment algorithm
 import numpy as np
+import sys
 from numpy import array
 
 def normvector(ioivector):
@@ -30,48 +31,65 @@ def normM(query, target):
 def calcD(M):
     (srow, scol) = M.shape
     D = np.zeros(shape=(srow,scol))
-    D[:, 0] = 0.0
-    # print D
     for j in range(1, scol):
         for i in range (0, srow):
             print (i,j)
-            print (' before', D)
             D[i, j] = dynamicD(D, M, i, j)
     return D
 
+
 def dynamicD(D, M, i, j):
-    penalty1 = 0.25
-    penalty2 = 0.25
-    vals = []
-    d1b = True
-    d3b = True
-    (srow, scol) = np.shape(M)
+    del_val = deletion(D,M,i,j)
+    ins_val = insert(D,M,i,j)
+    prev_val = previous(D,M,i,j)
+    min_val = min([del_val, ins_val,prev_val])
+    if min_val == sys.maxint:
+        return 0.0
+    return min_val
+
+
+def previous(D, M, i, j):
+    d = getVal(D, i, j - 1)
+    m_i_j = getVal(M, i, j)
+    m_i_j1 = getVal(M, i, j - 1)
+    if m_i_j1 == 0 or m_i_j == 0:
+        return sys.maxint
+    else:
+        return d + abs(m_i_j / m_i_j1 - 1)
+
+
+def deletion(D, M, i, j):
+    deletion_penalty = 0.25
     if i == 0 or j < 2:
-        # dont use deletion
-        d1b = Falsez
-        print('d1b = false')
-    if j < 1 or i == (int(srow)-1):
-        # dont use insertion
-        d3b = False
-        print('d3b = false')
-    if d1b:
-        d3 = getVal(D, i - 1, j - 2) + abs((
-                    (getVal(M, i - 1, j - 1) * getVal(M, i, j)) /
-                    (getVal(M, i - 1, j - 1) + getVal(M, i, j))
-                ) * (1 / (
-                    (getVal(M, i - 1, j - 2) * getVal(M, i, j - 1)) /
-                    (getVal(M, i - 1, j - 2) + getVal(M, i, j - 1))
-                )) - 1) + penalty2
-        vals.append(d3)
-    if d3b:
-        d2 = getVal(D, i + 1, j - 1) + abs(
-            ((getVal(M, i + 1, j) + getVal(M, i, j)) / (getVal(M, i + 1, j - 1) + getVal(M, i, j - 1))) - 1) + penalty1
-        vals.append(d2)
+        return sys.maxint
+    else:
+        d = getVal(D, i - 1, j - 2)
+        m_i1_j1 = getVal(M, i - 1, j - 1)
+        m_i_j = getVal(M, i, j)
+        m_i_j1 = getVal(M, i, j - 1)
+        m_i1_j2 = getVal(M, i - 1, j - 2)
+        if m_i1_j1 == 0.0 or m_i_j == 0.0 or m_i1_j2 == 0 or m_i_j1 == 0:
+            return sys.maxint
+        else:
+            return d + abs((((m_i1_j1 * m_i_j)) / (m_i1_j1 + m_i_j)) * (
+                    1 / ((m_i1_j2 * m_i_j1) / (m_i1_j2 + m_i_j1))) - 1) + deletion_penalty
+        return del_val
 
-    d1 = getVal(D, i, j - 1) + abs((getVal(M, i, j) / getVal(M, i, j - 1)) - 1)
-    vals.append(d1)
-
-    return min(vals)
+def insert(D, M, i, j):
+    (srow, scol) = np.shape(M)
+    insert_penalty = 0.25
+    if j < 1 or i == (int(srow) - 1):
+        return sys.maxint
+    else:
+        d = getVal(D, i + 1, j - 1)
+        m_1i_j = getVal(M, i + 1, j)
+        m_i_j = getVal(M, i, j)
+        m_1i_j1 = getVal(M, i + 1, j - 1)
+        m_i_j1 = getVal(M, i, j - 1)
+        if m_1i_j == 0.0 or m_i_j == 0.0 or m_1i_j1 == 0 or m_i_j1 == 0:
+            return sys.maxint
+        else:
+            return d + abs((m_1i_j + m_i_j) / (m_1i_j1 + m_i_j1) - 1) + insert_penalty
 
 
 def getVal(matrix, i, j):
@@ -82,7 +100,7 @@ def getVal(matrix, i, j):
             return matrix[i,j]
     else:
         print('error: not the right indexes')
-        return 0.1
+        return 0.0
 
 query = np.array([1.0, 2.0, 3.0, 2.0, 2.0, 2.0])
 target = np.array([1.0, 2.0, 3.0, 4.0, 2.0, 1.0])
