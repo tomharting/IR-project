@@ -112,6 +112,15 @@ def getMinVal(D, M):
                 break
     return min_val
 
+def compareTracks(query, target):
+    iS = 1
+    iE = 2
+    queryn = normvector(query)
+    targetn = normvector(target)
+    M = normM(queryn, targetn, iS, iE)
+    D = calcD(M)
+    return getMinVal(D, M)
+
 query = np.array([1.0, 2.0, 3.0, 2.0, 2.0, 2.0])
 target = np.array([1.0, 2.0, 3.0, 4.0, 2.0, 1.0])
 
@@ -124,17 +133,5 @@ target = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.]
 query = np.array([5.,1.,7.])
 target = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 
-queryn = normvector(query)
-targetn = normvector(target)
-
-iS = 1
-iE = 2
-M = normM(queryn, targetn, iS, iE)
-print M
-
-D = calcD(M)
-print D
-
-print 'size = ', D.shape
-print ('minval = ', getMinVal(D,M))
+compareTracks(query,target)
 

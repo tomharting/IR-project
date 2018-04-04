@@ -1,5 +1,7 @@
-import numpy as np
-srow = 3
-scol = 5
-M = np.zeros(shape=(srow, scol))
-M[2,2] = 2
+import sys
+a = {}
+b = {}
+a['1'] = [0.,1.]
+b['eerste'] = a
+
+print b['eerste']
