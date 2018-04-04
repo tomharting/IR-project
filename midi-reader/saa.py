@@ -9,18 +9,18 @@ def normvector(ioivector):
     # with the query IOI vector.
     return ioivector
 
-def normM(query, target):
+def normM(query, target, iS, iE):
     m = len(query)
     n = len(target)
-    scol = min(m, n)
+    scol = max(m, n)
     isieMin = abs(m-n)
-    iS = 1
-    iE = 2
     srow = isieMin + iS + iE + 1
+    print 'srow = ', srow
     M = np.zeros(shape=(srow, scol))
     for i in range(0,srow):
-        for j in range (0,scol):
+        for j in range (0, scol):
             qindex = iS - i + j
+            print 'qindex', qindex
             # print(iS, qindex, i, j)
             if 0 <= qindex <= min(m, n) - 1:
                 M[i, j] = query[qindex] / target[j]
@@ -33,14 +33,14 @@ def calcD(M):
     D = np.zeros(shape=(srow,scol))
     for j in range(1, scol):
         for i in range (0, srow):
-            print (i,j)
+            # print (i,j)
             D[i, j] = dynamicD(D, M, i, j)
     return D
 
 
 def dynamicD(D, M, i, j):
     del_val = deletion(D,M,i,j)
-    ins_val = insert(D,M,i,j)
+    ins_val = insertion(D,M,i,j)
     prev_val = previous(D,M,i,j)
     min_val = min([del_val, ins_val,prev_val])
     if min_val == sys.maxint:
@@ -75,7 +75,7 @@ def deletion(D, M, i, j):
                     1 / ((m_i1_j2 * m_i_j1) / (m_i1_j2 + m_i_j1))) - 1) + deletion_penalty
         return del_val
 
-def insert(D, M, i, j):
+def insertion(D, M, i, j):
     (srow, scol) = np.shape(M)
     insert_penalty = 0.25
     if j < 1 or i == (int(srow) - 1):
@@ -93,25 +93,48 @@ def insert(D, M, i, j):
 
 
 def getVal(matrix, i, j):
-    # print (i,j,np.shape(matrix))
     (xi, xj) = matrix.shape
-    # print(i, int(xi), j, int(xj))
     if i < int(xi) and j < int(xj):
             return matrix[i,j]
     else:
         print('error: not the right indexes')
         return 0.0
 
+# Retrieves the lowest value from matrix D leaving out zero values in M.
+def getMinVal(D, M):
+    (row_size, col_size) = D.shape
+    min_val = sys.float_info.max
+    for i in range(0,row_size):
+        for j in range(col_size-1, 1, -1):
+            if M[i,j] != 0. and M[i,j-1] != 0.:
+                if D[i,j] < min_val:
+                    min_val = D[i,j]
+                break
+    return min_val
+
 query = np.array([1.0, 2.0, 3.0, 2.0, 2.0, 2.0])
 target = np.array([1.0, 2.0, 3.0, 4.0, 2.0, 1.0])
+
+# query = np.array([1.0, 2.0, 3.0, 2.0, 2.0, 2.0])
+# target = np.array([2.0, 1.0, 2.0, 3.0, 2.0, 3.0])
+#
+query = np.array([4., 5., 6., 7.])
+target = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.])
+#
+query = np.array([5.,1.,7.])
+target = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 
 queryn = normvector(query)
 targetn = normvector(target)
 
-M = normM(queryn, targetn)
+iS = 1
+iE = 2
+M = normM(queryn, targetn, iS, iE)
 print M
 
 D = calcD(M)
 print D
 
+print 'size = ', D.shape
+print ('minval = ', getMinVal(D,M))
 
