@@ -3,10 +3,10 @@ import midi
 import json
 
 rootdir = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/clean_midi'
-songNameFile = 'melSongs.txt'
+songNameFile = '100popSongs.txt'
 songratio = {}
 
-def getTrackTicks(filename):
+def getTrackTicksLakh(filename):
     pattern = midi.read_midifile(filename)
     ticks = []
     for track in pattern:
@@ -26,6 +26,21 @@ def getTrackTicks(filename):
                     tmpSum += event.tick
     return ticks
 
+# contains only one track
+def getTrackTicksMiret(filename):
+    pattern = midi.read_midifile(filename)
+    ticks = []
+    for track in pattern:
+        tmpSum = 0;
+        for event in track:
+                # OnNoteEvents with a velocity of zero are used for breaks between notes.
+                if isinstance(event, midi.events.NoteOnEvent) and  event.data[1] is not 0:
+                    ticks.append(event.tick+tmpSum)
+                    tmpSum = 0
+                else:
+                    tmpSum += event.tick
+    return ticks
+
 def tickToRatio(tickList):
     ratio = []
     if tickList:
@@ -35,6 +50,7 @@ def tickToRatio(tickList):
         for i in range(1, len(ticksClean)):
             rat = float(ticksClean[i])/float(ticksClean[i-1])
             ratio.append(rat)
+
     return ratio
 
 def getAllSongFileName(fname):
@@ -43,13 +59,22 @@ def getAllSongFileName(fname):
         content = [x.strip('\n') for x in content]
     return content
 
-medFiles = getAllSongFileName(songNameFile)
-for file in medFiles:
-    fileName = os.path.join(rootdir, file)
-    ticks = getTrackTicks(fileName)
-    final = tickToRatio(ticks)
-    if final:
-        songratio[file] = final
+def getTrackRatioMiret(fname):
+    ticks = getTrackTicksMiret(fname)
+    return tickToRatio(ticks)
 
-with open('melsongratio.txt', 'w') as file:
-    file.write(json.dumps(songratio))
+def getTrackRatioLakh(fname):
+    ticks = getTrackTicksLakh(fname)
+    return tickToRatio(ticks)
+
+def createKahlTestSet():
+    medFiles = getAllSongFileName(songNameFile)
+
+    for file in medFiles:
+        fileName = os.path.join(rootdir, file)
+        final = getTrackRatioLakh(fileName)
+        if final:
+            songratio[file] = final
+
+    with open('melsongratio.txt', 'w') as file:
+        file.write(json.dumps(songratio))
