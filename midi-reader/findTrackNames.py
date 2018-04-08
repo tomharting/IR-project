@@ -1,7 +1,9 @@
 import os
 import midi
 
-rootdir = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/clean_midi'
+# FIll in your path to the lakh dataset
+ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/clean_midi'
+
 nameDir = {}
 medFiles = []
 
@@ -43,12 +45,12 @@ def addNamesToDir(trackNames):
             nameDir[name] += 1
 
 
-for subdir, dirs, files in os.walk(rootdir):
-    for file in files:
-        fileName = os.path.join(subdir, file)
-        if fileName.endswith(".mid"):
-            names = extractTrackName(fileName)
-            addNamesToDir(names)
-
-print repr(nameDir)
-print repr(medFiles)
+def findTracks():
+    for subdir, dirs, files in os.walk(ROOT_DIR):
+        for file in files:
+            fileName = os.path.join(subdir, file)
+            if fileName.endswith(".mid"):
+                names = extractTrackName(fileName)
+                addNamesToDir(names)
+    print repr(nameDir)
+    print repr(medFiles)
