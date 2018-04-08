@@ -76,5 +76,5 @@ def createKahlTestSet():
         if final:
             songratio[file] = final
 
-    with open('melsongratio.txt', 'w') as file:
+    with open('./comparer/data/targetVectorMapLakh.json', 'w') as file:
         file.write(json.dumps(songratio))
