@@ -4,7 +4,7 @@ import datetime
 
 MIRET = 'Miret'
 LAKH = 'Lakh'
-TEST_LAKH_QUERY_INNER_PATH= 'keyboard-reader/lakh-tap-test'
+TEST_LAKH_QUERY_INNER_PATH= 'keyboardreader/lakh-tap-test'
 TEST_LAKH_TARGET_INNER_PATH= 'midi-reader/??'
 TEST_LAKH_QUERY_TARGET_INNER_PATH= '??'
 TEST_MIRET_TARGET_INNER_PATH = 'QBT/REFMIDI/'

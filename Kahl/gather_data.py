@@ -1,8 +1,5 @@
 import csv
-import sys
-sys.path.insert(0, 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/keyboard-reader')
-import listener
-import json
+from keyboardreader import listener
 
 ALL_SONG_ID_FILE = 'all_song_to_id.csv'
 SAVE_TAP_PATH = 'all_user_query/'
