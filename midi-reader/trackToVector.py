@@ -3,8 +3,9 @@ import midi
 import json
 import findTrackNames
 
-ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = '../kahl/kahl_target_midi_songs_test_set_100.txt'
-TARGET_VECTOR_MAP_KAHL_INNER_PATH = '../comparer/data/targetVectorMapLakh.json'
+ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/'
+ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = 'Lakh/kahl_target_midi_songs_test_set_100.txt'
+TARGET_VECTOR_MAP_KAHL_INNER_PATH = 'comparer/data/targetVectorMapLakh.json'
 
 songratio = {}
 
@@ -70,15 +71,13 @@ def getTrackRatioLakh(fname):
     return tickToRatio(ticks)
 
 def createKahlTestSet():
-    all_melody_files = getAllSongFileName(ALL_KALH_TARGET_TEST_SONG_NAMES_PATH)
+    all_melody_files = getAllSongFileName(ROOT_DIR + ALL_KALH_TARGET_TEST_SONG_NAMES_PATH)
 
     for file in all_melody_files:
         fileName = os.path.join(findTrackNames.ROOT_DIR, file)
         final = getTrackRatioLakh(fileName)
         if final:
-            songratio[file] = final
+            songratio[fileName] = final
 
-    with open(TARGET_VECTOR_MAP_KAHL_INNER_PATH, 'w') as file:
+    with open(ROOT_DIR + TARGET_VECTOR_MAP_KAHL_INNER_PATH, 'w') as file:
         file.write(json.dumps(songratio))
-
-createKahlTestSet()
