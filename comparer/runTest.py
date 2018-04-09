@@ -18,7 +18,6 @@ def execute(test_set_name):
         print query
         resultMap = {}
         for target in targetVectorMap:
-            print target
             query_ioi = np.array(queryVectorMap[query]).astype(np.float)
             target_ioi = np.array(targetVectorMap[target])
             resultMap[target] = saa.compareTracks(query_ioi, target_ioi)

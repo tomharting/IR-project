@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 
+
 def normvector(ioivector):
     #For instance,  may be set to a value from m-2 to m+2 in order to deal with possible insertions and deletions in the
     # query input. Thus all these variant normalized versions of the IOI vectors for a song must be compared for similarity
@@ -45,14 +46,14 @@ def calcD(M):
     D = np.zeros(shape=(srow,scol))
     for j in range(1, scol):
         for i in range (0, srow):
-            # print (i,j)
-            D[i, j] = dynamicD(D, M, i, j)
+            if M[i,j] != 0.:
+                D[i, j] = dynamicD(D, M, i, j, srow)
     return D
 
 
-def dynamicD(D, M, i, j):
+def dynamicD(D, M, i, j, srow):
     del_val = deletion(D,M,i,j)
-    ins_val = insertion(D,M,i,j)
+    ins_val = insertion(D,M,i,j, srow)
     prev_val = previous(D,M,i,j)
     min_val = min([del_val, ins_val,prev_val])
     if min_val == sys.maxint:
@@ -61,9 +62,9 @@ def dynamicD(D, M, i, j):
 
 
 def previous(D, M, i, j):
-    d = getVal(D, i, j - 1)
-    m_i_j = getVal(M, i, j)
-    m_i_j1 = getVal(M, i, j - 1)
+    d = D[ i, j - 1]
+    m_i_j = M[ i, j]
+    m_i_j1 = M[ i, j - 1]
     if m_i_j1 == 0 or m_i_j == 0:
         return sys.maxint
     else:
@@ -75,11 +76,11 @@ def deletion(D, M, i, j):
     if i == 0 or j < 2:
         return sys.maxint
     else:
-        d = getVal(D, i - 1, j - 2)
-        m_i1_j1 = getVal(M, i - 1, j - 1)
-        m_i_j = getVal(M, i, j)
-        m_i_j1 = getVal(M, i, j - 1)
-        m_i1_j2 = getVal(M, i - 1, j - 2)
+        d = D[ i - 1, j - 2]
+        m_i1_j1 = M[ i - 1, j - 1]
+        m_i_j = M[ i, j]
+        m_i_j1 = M[ i, j - 1]
+        m_i1_j2 = M[ i - 1, j - 2]
         if m_i1_j1 == 0.0 or m_i_j == 0.0 or m_i1_j2 == 0 or m_i_j1 == 0:
             return sys.maxint
         else:
@@ -87,30 +88,20 @@ def deletion(D, M, i, j):
                     1 / ((m_i1_j2 * m_i_j1) / (m_i1_j2 + m_i_j1))) - 1) + deletion_penalty
         return del_val
 
-def insertion(D, M, i, j):
-    (srow, scol) = np.shape(M)
+def insertion(D, M, i, j, srow):
     insert_penalty = 0.25
     if j < 1 or i == (int(srow) - 1):
         return sys.maxint
     else:
-        d = getVal(D, i + 1, j - 1)
-        m_1i_j = getVal(M, i + 1, j)
-        m_i_j = getVal(M, i, j)
-        m_1i_j1 = getVal(M, i + 1, j - 1)
-        m_i_j1 = getVal(M, i, j - 1)
+        d = D[ i + 1, j - 1]
+        m_1i_j = M[ i + 1, j]
+        m_i_j = M[ i, j]
+        m_1i_j1 = M[ i + 1, j - 1]
+        m_i_j1 = M[ i, j - 1]
         if m_1i_j == 0.0 or m_i_j == 0.0 or m_1i_j1 == 0 or m_i_j1 == 0:
             return sys.maxint
         else:
             return d + abs((m_1i_j + m_i_j) / (m_1i_j1 + m_i_j1) - 1) + insert_penalty
-
-
-def getVal(matrix, i, j):
-    (xi, xj) = matrix.shape
-    if i < int(xi) and j < int(xj):
-            return matrix[i,j]
-    else:
-        print('error: not the right indexes')
-        return 0.0
 
 # Retrieves the lowest value from matrix D leaving out zero values in M.
 def getMinVal(D, M):
@@ -131,6 +122,9 @@ def compareTracks(query, target):
         target = tmp
     iS = 1
     iE = 2
+    if len(query) <= max(iS,iE):
+        iS = len(query) -1
+        iE = iS
     queryn = normvector(query)
     targetn = normvector(target)
 
