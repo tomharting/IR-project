@@ -25,15 +25,18 @@ def on_press(key):
 
 
 # Collect events until released
-with keyboard.Listener(
-        on_press=on_press) as listener:
-    listener.join()
+def record_tapping():
+    global timeVector
 
-timeVector = timeVector[:-1]
+    with keyboard.Listener(
+            on_press=on_press) as listener:
+        listener.join()
 
-featureVector = np.array([1])
-for i in range(1, len(timeVector)):
-    feature = timeVector[i]/timeVector[i-1]
-    featureVector = np.append(featureVector, feature)
+    timeVector = timeVector[:-1]
 
-print(featureVector)
+    featureVector = np.array([1])
+    for i in range(1, len(timeVector)):
+        feature = timeVector[i]/timeVector[i-1]
+        featureVector = np.append(featureVector, feature)
+
+    return featureVector.tolist()
