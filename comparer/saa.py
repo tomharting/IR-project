@@ -29,12 +29,15 @@ def normMFast(query, target, iS, iE):
     isieMin = abs(m-n)
     srow = isieMin + iS + iE + 1
     M = np.zeros(shape=(srow, scol))
+    zero_query_row = np.concatenate((np.zeros(scol+iE), query, np.zeros(scol+iS)))
     for i in range(0,srow):
-        leftIndex = 0 -(iS-i)
-        rightIndex = min(m,n)-1 - (iS-i)
-        print query
-        print target[leftIndex:rightIndex]
-        M[i, leftIndex:rightIndex] = query / target[leftIndex:rightIndex]
+        leftIndex = scol+iE + iS - i
+        rightIndex = leftIndex + scol
+        zero_query_part = zero_query_row[leftIndex:rightIndex]
+        non_zer_query_part_id = np.nonzero(zero_query_part)[0]
+        first_el = non_zer_query_part_id[0]
+        last_el = non_zer_query_part_id[len(non_zer_query_part_id)-1]+1
+        M[i, first_el:last_el] = zero_query_part[first_el:last_el] / target[first_el:last_el]
     return M
 
 def calcD(M):
@@ -131,7 +134,8 @@ def compareTracks(query, target):
     queryn = normvector(query)
     targetn = normvector(target)
 
-    M = normM(queryn, targetn, iS, iE)
+    M = normMFast(queryn, targetn, iS, iE)
+    # M = normM(queryn, targetn, iS, iE)
     D = calcD(M)
     return getMinVal(D, M)
 
