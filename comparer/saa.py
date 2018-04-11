@@ -41,19 +41,19 @@ def normMFast(query, target, iS, iE):
         M[i, first_el:last_el] = zero_query_part[first_el:last_el] / target[first_el:last_el]
     return M
 
-def calcD(M):
+def calcD(M, penalty_i, penalty_d):
     (srow, scol) = M.shape
     D = np.zeros(shape=(srow,scol))
     for j in range(1, scol):
         for i in range (0, srow):
             if M[i,j] != 0.:
-                D[i, j] = dynamicD(D, M, i, j, srow)
+                D[i, j] = dynamicD(D, M, i, j, srow, penalty_i, penalty_d)
     return D
 
 
-def dynamicD(D, M, i, j, srow):
-    del_val = deletion(D,M,i,j)
-    ins_val = insertion(D,M,i,j, srow)
+def dynamicD(D, M, i, j, srow, penalty_i, penalty_d):
+    del_val = deletion(D,M,i,j, penalty_d)
+    ins_val = insertion(D,M,i,j, srow, penalty_i)
     prev_val = previous(D,M,i,j)
     min_val = min([del_val, ins_val,prev_val])
     if min_val == sys.maxint:
@@ -71,8 +71,7 @@ def previous(D, M, i, j):
         return d + abs(m_i_j / m_i_j1 - 1)
 
 
-def deletion(D, M, i, j):
-    deletion_penalty = 0.25
+def deletion(D, M, i, j, deletion_penalty):
     if i == 0 or j < 2:
         return sys.maxint
     else:
@@ -88,8 +87,7 @@ def deletion(D, M, i, j):
                     1 / ((m_i1_j2 * m_i_j1) / (m_i1_j2 + m_i_j1))) - 1) + deletion_penalty
         return del_val
 
-def insertion(D, M, i, j, srow):
-    insert_penalty = 0.25
+def insertion(D, M, i, j, srow, insert_penalty):
     if j < 1 or i == (int(srow) - 1):
         return sys.maxint
     else:
@@ -115,13 +113,13 @@ def getMinVal(D, M):
                 break
     return min_val
 
-def compareTracks(query, target):
+def compareTracks(query, target, penalty_i, penalty_d):
     if len(query) > len(target):
         tmp = query
         query = target
         target = tmp
-    iS = 1
-    iE = 2
+    iS = 4
+    iE = 4
     if len(query) <= max(iS,iE):
         iS = len(query) -1
         iE = iS
@@ -130,7 +128,7 @@ def compareTracks(query, target):
 
     M = normMFast(queryn, targetn, iS, iE)
     # M = normM(queryn, targetn, iS, iE)
-    D = calcD(M)
+    D = calcD(M, penalty_i, penalty_d)
     return getMinVal(D, M)
 
 # query = np.array([1.0, 2.0, 3.0, 2.0, 2.0, 2.0])

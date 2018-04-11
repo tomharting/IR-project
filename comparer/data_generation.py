@@ -120,7 +120,11 @@ def createIndexFilesQBTS(test_set_name, query_test_location, target_test_locatio
     for query in queryFiles:
         # TODO: Check correct format of onset file (Does it need to be normalized?)
         vector = getFileContent(query)[0].split()
-        queryVectorMap[query] = trackToVector.tickToRatio(vector)
+        # add 0 because of track to vector pop
+        time_differences = [0.]
+        for i in range(0, len(vector)-1):
+            time_differences.append(float(vector[i+1]) - float(vector[i]))
+        queryVectorMap[query] = trackToVector.tickToRatio(time_differences)
 
     for target in targetFiles:
         targetVectorMap[target] = trackToVector.getTrackRatioMiret(target)

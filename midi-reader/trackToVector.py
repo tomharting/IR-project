@@ -27,6 +27,7 @@ def getTrackTicksLakh(filename):
                     tmpSum = 0
                 else:
                     tmpSum += event.tick
+    print ticks
     return ticks
 
 # contains only one track
@@ -56,6 +57,7 @@ def tickToRatio(tickList):
 
     return ratio
 
+
 def getAllSongFileName(fname):
     with open(fname) as f:
         content = f.readlines()
@@ -81,3 +83,6 @@ def createKahlTestSet():
 
     with open(ROOT_DIR + TARGET_VECTOR_MAP_KAHL_INNER_PATH, 'w') as file:
         file.write(json.dumps(songratio))
+
+# a = getTrackTicksMiret("C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/QBT_symbolic/Midi/0001.mid")
+# print tickToRatio(a)
