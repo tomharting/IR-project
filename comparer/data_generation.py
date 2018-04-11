@@ -1,12 +1,8 @@
 import os
-import sys
 import json
-sys.path.append('../')
-sys.path.insert(0, 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/midi-reader')
+from midireader import trackToVector
 
-import trackToVector
-
-ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/'
+ROOT_DIR = '/Users/Tom/Documents/Google Drive/MSc/Information Retrieval/IR-project/'
 JSON = '.json'
 QUERY_TARGET_MAP = 'queryTargetMap'
 QUERY_VECTOR_MAP = 'queryVectorMap'
