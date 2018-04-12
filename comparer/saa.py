@@ -113,13 +113,15 @@ def getMinVal(D, M):
                 break
     return min_val
 
+
+
 def compareTracks(query, target, penalty_i, penalty_d):
     if len(query) > len(target):
-        tmp = query
-        query = target
-        target = tmp
-    iS = 4
-    iE = 4
+            tmp = query
+            query = target
+            target = tmp
+    iS = 1
+    iE = 2
     if len(query) <= max(iS,iE):
         iS = len(query) -1
         iE = iS

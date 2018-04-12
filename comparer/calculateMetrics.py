@@ -8,9 +8,15 @@ def calcMetrics(dic_scores, dic_query_to_target):
         target = dic_query_to_target[query]
         sorted_res = sorted(dic_scores[query].items(), key=operator.itemgetter(1))
         unzipped_tar = zip(*sorted_res)[0]
-        if target in unzipped_tar[:10]:
+        test = [x.encode('UTF8') for x in unzipped_tar]
+        test2 = [x.replace('\\', '/') for x in test]
+        target2 = target.encode('UTF8').replace('\\', '/')
+        if target2 in test2[:10]:
             topTen += 1.
-        reciprocal += 1./(unzipped_tar.index(target) + 1)
+        # else:
+        #     print query, target2, test2.index(target2)
+        index = test2.index(target2)
+        reciprocal += 1./(index + 1)
     return [topTen, reciprocal]
 
 

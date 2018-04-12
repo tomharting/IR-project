@@ -27,6 +27,7 @@ def on_press(key):
 # Collect events until released
 def record_tapping():
     global timeVector
+    print timeVector
 
     with keyboard.Listener(
             on_press=on_press) as listener:

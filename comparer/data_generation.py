@@ -2,7 +2,7 @@ import os
 import json
 from midireader import trackToVector
 
-ROOT_DIR = '/Users/Tom/Documents/Google Drive/MSc/Information Retrieval/IR-project/'
+ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/'
 JSON = '.json'
 QUERY_TARGET_MAP = 'queryTargetMap'
 QUERY_VECTOR_MAP = 'queryVectorMap'
@@ -39,7 +39,7 @@ def createLakhFiles(test_set_name, query_test_location, target_test_location, ma
         queryVectorMap[query] = getFileContent(query)[0].split()
 
     query_path = ROOT_DIR + DATA_PATH + QUERY_VECTOR_MAP + test_set_name + JSON
-    query_target_map_path = ROOT_DIR  + DATA_PATH + QUERY_TARGET_MAP + test_set_name + JSON
+    query_target_map_path = ROOT_DIR+ DATA_PATH + QUERY_TARGET_MAP + test_set_name + JSON
 
     with open(query_path, 'w') as file:
         file.write(json.dumps(queryVectorMap))

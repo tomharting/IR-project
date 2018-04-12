@@ -4,7 +4,8 @@ import json
 import findTrackNames
 
 ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/'
-ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = 'Lakh/kahl_target_midi_songs_test_set_100.txt'
+ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = 'Lakh/test_song.txt'
+# ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = 'Lakh/kahl_target_midi_songs_test_set_100.txt'
 TARGET_VECTOR_MAP_KAHL_INNER_PATH = 'comparer/data/targetVectorMapLakh.json'
 
 songratio = {}
@@ -12,6 +13,7 @@ songratio = {}
 def getTrackTicksLakh(filename):
     pattern = midi.read_midifile(filename)
     ticks = []
+    print(pattern)
     for track in pattern:
         melTrack = False
         tmpSum = 0;
@@ -27,7 +29,6 @@ def getTrackTicksLakh(filename):
                     tmpSum = 0
                 else:
                     tmpSum += event.tick
-    print ticks
     return ticks
 
 # contains only one track
@@ -80,9 +81,12 @@ def createKahlTestSet():
         final = getTrackRatioLakh(fileName)
         if final:
             songratio[fileName] = final
+        else:
+            print 'one is not'
 
-    with open(ROOT_DIR + TARGET_VECTOR_MAP_KAHL_INNER_PATH, 'w') as file:
+    with open(ROOT_DIR + TARGET_VECTOR_MAP_KAHL_INNER_PATH + 'adjusted', 'w') as file:
         file.write(json.dumps(songratio))
 
 # a = getTrackTicksMiret("C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/QBT_symbolic/Midi/0001.mid")
 # print tickToRatio(a)
+# createKahlTestSet()
