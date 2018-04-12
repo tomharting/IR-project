@@ -3,11 +3,12 @@ import midi
 import json
 import findTrackNames
 
-ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/'
-ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = 'Lakh/kahl_target_midi_songs_test_set_100.txt'
-TARGET_VECTOR_MAP_KAHL_INNER_PATH = 'comparer/data/targetVectorMapLakh.json'
+# Converts Lakh OR miret midi files to a tick vector (vector of time differences)
+# Next converts a tick vector to a IOI vector
 
-songratio = {}
+ROOT_DIR = 'C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/'
+ALL_KALH_TARGET_TEST_SONG_NAMES_PATH = 'Lakh/lakh_target_midi_songs_test_set_100.txt'
+TARGET_VECTOR_MAP_KAHL_INNER_PATH = 'comparer/data/targetVectorMapLakh.json'
 
 def getTrackTicksLakh(filename):
     pattern = midi.read_midifile(filename)
@@ -18,7 +19,6 @@ def getTrackTicksLakh(filename):
         for event in track:
             if isinstance(event, midi.events.TrackNameEvent):
                 if hasattr(event, "text"):
-                    # trackNames.append(event.text.lower())
                     if event.text.lower().__eq__('melody'):
                         melTrack = True
             if melTrack:
@@ -27,7 +27,6 @@ def getTrackTicksLakh(filename):
                     tmpSum = 0
                 else:
                     tmpSum += event.tick
-    print ticks
     return ticks
 
 # contains only one track
@@ -45,7 +44,7 @@ def getTrackTicksMiret(filename):
                     tmpSum += event.tick
     return ticks
 
-def tickToRatio(tickList):
+def tickToIOI(tickList):
     ratio = []
     if tickList:
         ratio = [1.0]
@@ -66,23 +65,22 @@ def getAllSongFileName(fname):
 
 def getTrackRatioMiret(fname):
     ticks = getTrackTicksMiret(fname)
-    return tickToRatio(ticks)
+    return tickToIOI(ticks)
 
 def getTrackRatioLakh(fname):
     ticks = getTrackTicksLakh(fname)
-    return tickToRatio(ticks)
+    return tickToIOI(ticks)
 
 def createKahlTestSet():
+    song_ratio = {}
     all_melody_files = getAllSongFileName(ROOT_DIR + ALL_KALH_TARGET_TEST_SONG_NAMES_PATH)
 
     for file in all_melody_files:
         fileName = os.path.join(findTrackNames.ROOT_DIR, file)
         final = getTrackRatioLakh(fileName)
         if final:
-            songratio[fileName] = final
+            song_ratio[fileName] = final
 
     with open(ROOT_DIR + TARGET_VECTOR_MAP_KAHL_INNER_PATH, 'w') as file:
-        file.write(json.dumps(songratio))
+        file.write(json.dumps(song_ratio))
 
-# a = getTrackTicksMiret("C:/Users/daniel.DANIEL-PC/Documents/uni/Master/Information retrieval/group project/Git/QBT_symbolic/Midi/0001.mid")
-# print tickToRatio(a)

@@ -2,6 +2,8 @@ from pynput import keyboard
 import time
 import numpy as np
 
+# Takes user input and returns timing vector
+
 prevTime = 0
 prevDuration = 0
 timeVector = np.array([])
@@ -27,6 +29,7 @@ def on_press(key):
 # Collect events until released
 def record_tapping():
     global timeVector
+    print timeVector
 
     with keyboard.Listener(
             on_press=on_press) as listener:
