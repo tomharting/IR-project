@@ -2,6 +2,8 @@ from pynput import keyboard
 import time
 import numpy as np
 
+# Takes user input and returns timing vector
+
 prevTime = 0
 prevDuration = 0
 timeVector = np.array([])
